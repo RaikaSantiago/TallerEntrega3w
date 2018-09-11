@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<title>Movimientos Cliente</title>
+	<link rel="icon" type="image/jpg" href="img/Univalle.jpg">
+
+	<h1>Movimientos Bancarios</h1>
+<style type="text/css">
+
+	h1{
+		color: black;
+		text-align: center;
+		font-family: Arial;
+		font-size: 25pt;
+	}
+
+	body{
+		background-image: url("img/2.jpg");
+	}
+
+	label{
+		font-size: 20pt;
+	}
+	table {
+    	border-collapse: collapse;
+	}
+
+	table, th, td {
+    	border: 1px solid border-collapse;
+    	font-size: 15pt;
+    	font-font-family: Arial;
+    	background-color: #6F6E6E;
+    	color: white;
+
+    }
+
+</style>
+<script language="javascript">
+
+
+	function valida(e){
+	    tecla = (document.all) ? e.keyCode : e.which;
+
+	    //Tecla de retroceso para borrar, siempre la permite
+	    if (tecla==8){
+	        return true;
+	    }
+	        
+	    // Patron de entrada, en este caso solo acepta numeros
+	    patron =/[0-9]/;
+	    tecla_final = String.fromCharCode(tecla);
+	    return patron.test(tecla_final);
+
+	}
+
+$(document).ready(function (){
+
+	let tabla = document.getElementById("tabla");
+
+	
+	for (let i = 0; i < localStorage.length; i++) {
+
+	
+		CargarLocalStorage(i+1,localStorage.getItem( localStorage.key( i )))	;
+
+
+	}
+
+
+});
+ 
+  
+	function NuevaFila(){
+
+            let fecha =new Date();
+            let inFecha = fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+fecha.getFullYear();
+			let nombre=document.getElementById("Nombre").value;
+			let opciones=document.getElementById("Opciones").value;
+			let valor=document.getElementById("Valor").value;
+            
+			let tabla = document.getElementById("tabla");
+
+	        let fila = tabla.insertRow(tabla.rows.length);
+
+		    let colum1 = fila.insertCell(0);
+		    let colum2 = fila.insertCell(1);
+		    let colum3 = fila.insertCell(2);
+		    let colum4 = fila.insertCell(3);
+		    let colum5 = fila.insertCell(4);
+            let boton = '<input type="button" style="font-size: 15pt;" id="'+fila.rowIndex+'" class=" btn btn-primary" onclick="EliminarDato(this,'+fila.rowIndex+')" value="Eliminar">';
+		    colum1.innerHTML = '<tr><td>'+nombre+'</td></tr>';
+		    colum2.innerHTML = '<tr><td>'+opciones+'</td></tr>';
+		    colum3.innerHTML = '<tr><td>'+valor+'</td></tr>';
+		    colum4.innerHTML = '<tr><td>'+inFecha+'</td></tr>';
+		    colum5.innerHTML = '<tr><td>'+boton+'</td></tr>';
+		   
+		   GuardarLocalStorage(nombre, opciones, valor, inFecha, boton, fila.rowIndex);
+
+	        LimpiarTexto();
+		}
+
+			 function EliminarDato(b,index){
+	             
+
+	            let row = b.parentNode.parentNode.rowIndex;
+				let tabla = document.getElementById("tabla");
+				localStorage.removeItem("Dato"+index);
+				tabla.deleteRow(row); 
+
+			 }
+
+			function LimpiarTexto(){
+				let nombre = document.getElementById("Nombre");
+				let option = document.getElementById("Opciones");
+				let valor = document.getElementById("Valor");
+
+				nombre.value = "";
+				valor.value = "";
+
+		   }
+
+		   function GuardarLocalStorage(nombre, option, valor, fecha, boton, index){
+
+
+			let Dato = {
+				"nombre" : nombre,
+				"option" : option,
+				"valor" : valor,
+				"fecha" : fecha,
+				"btn" : boton
+			}
+	        localStorage.setItem("Dato"+index, JSON.stringify(Dato));
+         }
+ 
+
+		    function CargarLocalStorage(index,Dato){
+
+
+			 let datos = JSON.parse(Dato);
+
+
+			let tabla = document.getElementById("tabla");
+
+			let fila = tabla.insertRow(index);
+
+
+			let columna1 = fila.insertCell(0);
+			let columna2 = fila.insertCell(1);
+			let columna3 = fila.insertCell(2);
+			let columna4 = fila.insertCell(3);
+			let columna5 = fila.insertCell(4);
+
+
+			columna1.innerHTML = '<td>'+datos.nombre+'</td>';
+			columna2.innerHTML = '<td>'+datos.option+'</td>';
+			columna3.innerHTML = '<td>'+datos.valor+'</td>';
+			columna4.innerHTML = '<td>'+datos.fecha+'</td>';
+			columna5.innerHTML = '<td>'+datos.btn+'</td>';
+
+		}
+
+</script>
+<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<form method="post" action="#">
+	<div class="container">
+
+	  <div>
+	        <label>Nombre Movimiento</label>
+	        <input type="text" class="form-control" style="border-color: black; border-width: thin;" value="" id="Nombre" placeholder="Nombre Movimiento" />
+	  </div>
+	    <div>
+	        <label>Tipo Movimiento</label><select id="Opciones" style="border-color: black; border-width: thin;" class="form-control" >
+	        	<option>-Seleccione una opcion-</option>
+	        	<option name="1">Transaccion</option>
+	        	<option name="2">Retiro</option>
+	        	<option name="3">Consulta</option>
+	        </select>
+	    </div>
+	    <div>
+	        <label>Valor Movimiento</label><input type="text" style="border-color: black; border-width: thin;" class="form-control" id="Valor" value="" placeholder="Valor Movimiento" onkeypress="return valida(event)" />
+	    </div>
+	    <div>
+	    	 
+	    </div>
+
+<br>
+<br>
+	    <center><input type="button" style="font-size: 20pt;" class="btn btn-primary" name="button" value="Crear Movimiento" onclick="NuevaFila()" id="botonCrear"></center>
+	<br>
+	<br>
+			<div>
+	 			 <table class="table" id="tabla">
+	    			<thead>
+	     				 <tr>
+	    			 	   	<th >Nombre Movimiento</th>
+	        				<th >Tipo Movimiento</th>
+	        				<th >Valor Movimiento</th>
+	        				<th >Fecha De Registro</th>
+	        				<th >Accion</th>
+	     					</tr>
+	    			</thead>
+	   			
+				  </table>
+				 </div>
+		</form>
+		
+
+</body>
+
+
+</html>
